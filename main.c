@@ -88,7 +88,8 @@ int main(){
 			case 'COMMAND_TYPE_A': {
 				Command* info = command;
 
-				Job* job = {info->jobId, info->priority, info->memory, info->devices, info->time, info->runTime,  0};
+				Job* job = newJob(info);
+				//{info->jobId, info->priority, info->memory, info->devices, info->time, info->runTime,  0};
 				//need to incorporate jobs?? FIFO? SJF?
 				if(job->needMemory > system->totalMemory || job->needDevice > system->totalDevice){
 					printf("job is rejected, resource is not enough");
