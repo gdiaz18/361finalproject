@@ -21,9 +21,9 @@
 
 
 
-System* newSystem(Command* c){
+struct System* newSystem(struct Command* c){
     //crete a new system
-    System* system = (System*)malloc(sizeof(System));
+    struct System* system = (struct System*)malloc(sizeof(struct System));
 
     //initialize
     system->time = 0;
@@ -44,7 +44,7 @@ System* newSystem(Command* c){
 };
 
 //this function im not sure about cause its suppose to return a number
-int nextEvent(System* s, Command* c){
+int nextEvent(struct System* s, struct Command* c){
     //check if job in hold queue
     if(!isEmpty(s->holdQueue1) || !isEmpty(s->holdQueue2)){
         arriveJob(s,c); //confused cause 2nd param should be a job
@@ -77,7 +77,7 @@ int nextEvent(System* s, Command* c){
     return -1;
 };
 
-int arriveJob(System* s, Job* j){
+int arriveJob(struct System* s, struct Job* j){
     // find what hold queue to push the job
     if(j->priority == 1){
         pushQueue(s->holdQueue1, j);
@@ -92,33 +92,33 @@ int arriveJob(System* s, Job* j){
 
 };
 
-void scheduleQueue(System* s){
+void scheduleQueue(struct System* s){
     //move jobs from hold to ready queue
     while(!isEmpty(s->holdQueue1)){
-        Job* j = popQueue(s->holdQueue1);
+        struct Job* j = popQueue(s->holdQueue1);
         pushQueue(s->readyQueue, j);
     }
 
     while(!isEMpty(s->holdQueue2)){
-        Job* j = popQueue(s->holdQueue2);
+        struct Job* j = popQueue(s->holdQueue2);
         pushQueue(s->readyQueue, j);
     }
 };
 
-void moveOutHold(System* s){
+void moveOutHold(struct System* s){
     //move jobs from hold to leave queue
     while (!isEmpty(s->holdQueue1)) {
-            Job* j = popQueue(s->holdQueue1);
+            struct Job* j = popQueue(s->holdQueue1);
             pushQueue(s->leaveQueue, j);
         }
         
         while (!isEmpty(s->holdQueue2)) {
-            Job* j = popQueue(s->holdQueue2);
+            struct Job* j = popQueue(s->holdQueue2);
             pushQueue(s->leaveQueue, j);
         }
 };
 
-void moveReadyToRunning(System* s){
+void moveReadyToRunning(struct System* s){
     //move jobs from ready to running state
     if(s->running == NULL && !isEmpty(s->readyQueue)){
         s->running = popQueue(s->readyQueue);
@@ -126,7 +126,7 @@ void moveReadyToRunning(System* s){
     }
 };
 
-void jobComplete(System* s){
+void jobComplete(struct System* s){
     //move completed job from running state to leave queue
     if(s->running != NULL){
         pushQueue(s->leaveQueue, s->running);
@@ -135,15 +135,15 @@ void jobComplete(System* s){
 
 };
 
-void moveWaitToReady(System* s){
+void moveWaitToReady(struct System* s){
     //move job from wait queue to ready queue
     if (!isEmpty(s->waitQueue)) {
-        Job* j = popQueue(s->waitQueue);
+        struct Job* j = popQueue(s->waitQueue);
         pushQueue(s->readyQueue, j);
     }
 };
 
-void moveRunningToReady(System* s){
+void moveRunningToReady(struct System* s){
     //move running job to ready queue
     if (s->running != NULL) {
         psuQueue(s->readyQueue, s->running);
@@ -152,7 +152,7 @@ void moveRunningToReady(System* s){
 
 };
 
-void moveRunningToWait(System* s){
+void moveRunningToWait(struct System* s){
     //move running job to wait queue
     if (s->running != NULL) {
         pushQueue(s->waitQueue, s->running);
@@ -160,7 +160,7 @@ void moveRunningToWait(System* s){
     }
 };
 
-void requestDevice(System* s, Command* c){
+void requestDevice(struct System* s, struct Command* c){
     //check is system has availible devices
     if(s->curDevice > 0){
         s-> curDevice--;
@@ -171,7 +171,7 @@ void requestDevice(System* s, Command* c){
     }
 };
 
-void releaseDevice(System* s, Command* c){
+void releaseDevice(struct System* s, struct Command* c){
     //release device and icnrement availible device count
     s->curDevice++;
 };

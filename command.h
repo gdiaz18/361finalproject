@@ -2,7 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct Command{
+#ifndef COMMAND_H
+#define COMMAND_H
+
+struct Command{
     char type; //command type
     int time; // start/arrival time
     int jobId; //"A" command
@@ -11,13 +14,15 @@ typedef struct Command{
     int quantum;//"C" command "Q"
     int runTime; //"A" command R
     int priority;//"A" command P
-}Command;
+};
 
 int parseParameter(char* line, char* type, int* num, int start);
-Command* parseCommand(char* line);
+struct Command* parseCommand(char* line);
 
 const char COMMAND_TYPE_C = 'C';
 const char COMMAND_TYPE_A = 'A';
 const char COMMAND_TYPE_Q = 'Q';
 const char COMMAND_TYPE_L = 'L';
 const char COMMAND_TYPE_D = 'D';
+
+#endif

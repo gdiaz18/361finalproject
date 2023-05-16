@@ -1,31 +1,38 @@
 #include "Job.h"
+#include "command.h"
 
-typedef struct System{
+//typedef struct System System;
+#ifndef SYSTEM_H
+#define SYSTEM_H
+
+struct System{
     int time; //current time
     int totalMemory;
     int curMemory;
     int totalDevice;
     int curDevice;
     int timeQuantum;
-    Queue* holdQueue1;
-    Queue* holdQueue2;
-    Queue* waitQueue;
-    Queue* readyQueue;
-    Queue* leaveQueue;
-    Job* running;
+    struct Queue* holdQueue1;
+    struct Queue* holdQueue2;
+    struct Queue* waitQueue;
+    struct Queue* readyQueue;
+    struct Queue* leaveQueue;
+    struct Job* running;
     int startTime;
-}System;
+};
 
 //initialize functions that will be used in system.c
-System* newSystem(Command* c);
-int nextEvent(System* s, Command* c);
-int arriveJob(System* s, Job* j);
-void scheduleQueue(System* s);
-void moveOutHold(System* s);
-void moveReadyToRunning(System* s);
-void jobComplete(System* s);
-void moveWaitToReady(System* s);
-void moveRunningToReady(System* s);
-void moveRunningToWait(System* s);
-void requestDevice(System* s, Command* c);
-void releaseDevice(System* s, Command* c);
+struct System* newSystem(struct Command* c);
+int nextEvent(struct System* s, struct Command* c);
+int arriveJob(struct System* s, struct Job* j);
+void scheduleQueue(struct System* s);
+void moveOutHold(struct System* s);
+void moveReadyToRunning(struct System* s);
+void jobComplete(struct System* s);
+void moveWaitToReady(struct System* s);
+void moveRunningToReady(struct System* s);
+void moveRunningToWait(struct System* s);
+void requestDevice(struct System* s, struct Command* c);
+void releaseDevice(struct System* s, struct Command* c);
+
+#endif

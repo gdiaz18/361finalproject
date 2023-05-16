@@ -16,7 +16,8 @@
 
 int time_slice = 4;
 int current_time = 0;
-int available_memory = 256;
+//int available_memory = 256;
+int used_memory = 0;
 int num_processes = 0;
 
 //sorting hold queue based on SJF algorithm
@@ -49,17 +50,15 @@ int num_processes = 0;
 
 int main(){
 	//struct Devices tmp;
-
-	System *system;
-
+	struct System *system;
 
 	//reading input files function
 	char file[500];
 	
-	char file_name[100]; //ask about string error
+	//char file_name[100]; ask about string error
 
 	//opening file
-	FILE* ptr = fopen(file_name, "r");
+	FILE* ptr = fopen("i0.txt", "r");
 
 	if(NULL == ptr){
 		printf("File cannot be opened");
@@ -67,15 +66,23 @@ int main(){
 
 	//reading through each line
 	while (fgets(file, sizeof(file), ptr) != NULL){
+
 		//call parsing functions and then push to queue
-		Command* command = parseCommand(file);
+		struct Command* command = parseCommand(file);
 
-		//System Config
 		switch (command->type){
+			//System Config
 			case 'COMMAND_TYPE_C': {
-				Command* info = command;
+				struct Command* info = command;
+				system = newSystem(info);
 
-				//need to incorporate queues?
+				//need to incorporate queues
+				emptyQueue(system->holdQueue1);
+				emptyQueue(system->holdQueue2);
+				emptyQueue(system->readyQueue);
+				emptyQueue(system->waitQueue);
+
+				printf("-----Configuring----\n");
 
 				system->time = info->time;
 				system->totalMemory = info->memory;
@@ -84,31 +91,47 @@ int main(){
 				system->curDevice = system->totalDevice;
 				system->timeQuantum = info->quantum;
 
+				printf("Made system");
+
 				break;
 			}
 			//Job arrival
 			case 'COMMAND_TYPE_A': {
-				Command* info = command;
+				struct Command* info = command;
 
-				Job* job = {info->jobId, info->priority, info->memory, info->devices, info->time, info->runTime,  0};
+				struct Job* job = newJob(info);
 				//need to incorporate jobs?? FIFO? SJF?
 				if(job->needMemory > system->totalMemory || job->needDevice > system->totalDevice){
 					printf("job is rejected, resource is not enough");
 				}
 				if(system->curMemory >= job->needMemory){
 					printf("adding job to ready queue");
+
 					//push job to readyqueue
 					pushQueue(system->readyQueue, job);
-					//system->curMemory = system->totalMemory - readyQueue->totalMemory
+
+					used_memory = used_memory + job->needMemory;
+					printf("Used memory: %d", used_memory);
+
+					system->curMemory = system->totalMemory - job->needMemory;
+
+					//need to check for internel event time??
 				}
 				else{
 					if(job->priority == 1){
 						//push job into hold queue 1 SJF 
+						printf("Adding %d to Hold Queue 1\n", job->jobId);
 						pushQueue(system->holdQueue1, job);
+
+						printf("Done Adding!");
 					}
 					else{
 						//push job into hold queue 2 FIFO 
+						printf("Adding %d to Hold Queue 2\n", job->jobId);
+						printf("Memory needed: %d, Available: %d,", job->needMemory, system->totalMemory - used_memory);
 						pushQueue(system->holdQueue2, job);
+
+						printf("Done adding!");
 					}
 				}
 
@@ -116,9 +139,9 @@ int main(){
 			}
 			//Request for Jobs
 			case 'COMMAND_TYPE_Q': {
-				Command* info = command;
+				struct Command* info = command;
 
-				Job job = {info->jobId, info->priority, info->memory, info->devices, info->time, info->runTime,  0};
+				struct Job* job = newJob(info);
 				//use if statement to compare number of devices - number of devices used greater than or equal to used devices
 				if((system->totalDevice - system->curDevice) >= system->curDevice){
 					
