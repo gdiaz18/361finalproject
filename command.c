@@ -33,9 +33,9 @@ int parseParameter(char* line, char* type, int* num, int start) {
 
 }
 
-Command* parseCommand(char* line) {
+struct Command* parseCommand(char* line) {
     //allocates memory for new command struct
-    Command* cmd = (Command*) malloc(sizeof(Command));
+    struct Command* cmd = (struct Command*)malloc(sizeof(struct Command));
 
 
     if (cmd == NULL) {
