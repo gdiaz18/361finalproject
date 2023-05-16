@@ -4,8 +4,8 @@
 #include"command.h"
 
 //creates a new job from a command
-Job* newJob(Command* c){
-    Job* newJob = (Job*)malloc(sizeof(Job));
+struct Job* newJob(struct Command* c){
+    struct Job* newJob = (struct Job*)malloc(sizeof(struct Job));
     //does set job based on command
     if(newJob == NULL){
         return NULL;
@@ -15,7 +15,7 @@ Job* newJob(Command* c){
 }
 
 //display details of a job
-void displayJob(Job* j, int type){
+void displayJob(struct Job* j, int type){
     if(type == 1){
         printf("Type: SJF");
     }
@@ -28,8 +28,8 @@ void displayJob(Job* j, int type){
 }
 
 //creates a new queue of jobs
-Queue* newQueue(int type){
-    Queue* newQueue = (Queue*)malloc(sizeof(Queue));
+struct Queue* newQueue(int type){
+    struct Queue* newQueue = (struct Queue*)malloc(sizeof(struct Queue));
     if ( newQueue == NULL){
         return NULL;
     }
@@ -42,14 +42,14 @@ Queue* newQueue(int type){
 
 
 //push job to queue
-void pushQueue(Queue* q, Job* j){
+void pushQueue(struct Queue* q, struct Job* j){
     if(q->head = NULL){
         q->head = j;
         q->tail = j;
         return;
     }
     if(q->queueType == 1){ // 1: SJF 2:FIFO
-        Job* s = q->head;
+        struct Job* s = q->head;
         //need to find right position to intsert
         while(s->next != NULL){
             if(j->totalTime >= s-> totalTime && j->totalTime < s->next->totalTime){
@@ -69,11 +69,11 @@ void pushQueue(Queue* q, Job* j){
 }
 
 //removes the first job from a queue
-Job* popQueue(Queue* q){
+struct Job* popQueue(struct Queue* q){
     if (q == NULL){
         return NULL;
     }
-    Job* remove = q->head;
+    struct Job* remove = q->head;
     q->head= q->head->next;
     remove->next=NULL;
     if(q->head == NULL){
@@ -83,14 +83,14 @@ Job* popQueue(Queue* q){
 }
 
 //check if queue is empty
-int emptyQueue(Queue*q){
+int emptyQueue(struct Queue*q){
     if(q->head == NULL){
         return 1;
     }
     return 0;
 }
 
-void displayJob(Job* j, int type){
+/* void displayJob(struct Job* j, int type){
     if(type == 1){
         printf("Type: SJF");
     }
@@ -100,4 +100,4 @@ void displayJob(Job* j, int type){
     else{
         printf("Invalid");
     }
-}
+} */

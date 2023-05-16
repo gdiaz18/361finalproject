@@ -5,7 +5,11 @@
 #include "Device.h"
 #include "Job.h"
 #include "System.h"
+
+#ifdef COMMAND_H
+#define COMMAND_H
 #include "command.h"
+#endif 
 
 //testing branch
 
