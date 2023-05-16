@@ -1,7 +1,7 @@
 #include "System.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "job.h"
+#include "Job.h"
 #include"command.h"
 
 
@@ -34,9 +34,9 @@ struct System* newSystem(struct Command* c){
     system -> timeQuantum = c->quantum;
     system -> holdQueue1 = newQueue(1); //SJF
     system -> holdQueue2 = newQueue(2); //FIFO
-    system->waitQueue = newQueue(NULL);
-    system-> readyQueue = newQueue(NULL);
-    system->leaveQueue= newQueue(NULL);
+    system->waitQueue = newQueue(-1);
+    system-> readyQueue = newQueue(-1);
+    system->leaveQueue= newQueue(-1);
     system->running =0;
     system->startTime = 0;
 
@@ -46,21 +46,21 @@ struct System* newSystem(struct Command* c){
 //this function im not sure about cause its suppose to return a number
 int nextEvent(struct System* s, struct Command* c){
     //check if job in hold queue
-    if(!isEmpty(s->holdQueue1) || !isEmpty(s->holdQueue2)){
+    if((s->holdQueue1->size != 0) || (s->holdQueue2->size != 0)){
         arriveJob(s,c); //confused cause 2nd param should be a job
         return 0; //success
         //reutrn EVENT_ARRIVE_JOB
     }
 
     //check is job in ready queue
-    if(!isEmpty(s->readyQueue)){
+    if((s->readyQueue->size != 0)){
         moveReadyToRunning(s);
         return 0; //success 
         // return EVENT_MOVE_READY_TO_RUNNING
     }
 
     //check is job in waiting queue 
-    if(!isEmpty(s->waitQueue)){
+    if((s->waitQueue->size != 0)){
         moveWaitToReady(s);
         return 0; //success
         //return EVENT_MOVE_WAIT_TO_READY;
@@ -94,12 +94,12 @@ int arriveJob(struct System* s, struct Job* j){
 
 void scheduleQueue(struct System* s){
     //move jobs from hold to ready queue
-    while(!isEmpty(s->holdQueue1)){
+    while((s->holdQueue1->size != 0)){
         struct Job* j = popQueue(s->holdQueue1);
         pushQueue(s->readyQueue, j);
     }
 
-    while(!isEMpty(s->holdQueue2)){
+    while((s->holdQueue2->size != 0)){
         struct Job* j = popQueue(s->holdQueue2);
         pushQueue(s->readyQueue, j);
     }
@@ -107,12 +107,12 @@ void scheduleQueue(struct System* s){
 
 void moveOutHold(struct System* s){
     //move jobs from hold to leave queue
-    while (!isEmpty(s->holdQueue1)) {
+    while ((s->holdQueue1->size != 0)){
             struct Job* j = popQueue(s->holdQueue1);
             pushQueue(s->leaveQueue, j);
         }
         
-        while (!isEmpty(s->holdQueue2)) {
+        while ((s->holdQueue2->size != 0)) {
             struct Job* j = popQueue(s->holdQueue2);
             pushQueue(s->leaveQueue, j);
         }
@@ -120,7 +120,7 @@ void moveOutHold(struct System* s){
 
 void moveReadyToRunning(struct System* s){
     //move jobs from ready to running state
-    if(s->running == NULL && !isEmpty(s->readyQueue)){
+    if(s->running == NULL && (s->readyQueue->size != 0)){
         s->running = popQueue(s->readyQueue);
         s->startTime = s->time;
     }
@@ -137,7 +137,7 @@ void jobComplete(struct System* s){
 
 void moveWaitToReady(struct System* s){
     //move job from wait queue to ready queue
-    if (!isEmpty(s->waitQueue)) {
+    if ((s->waitQueue->size != 0)) {
         struct Job* j = popQueue(s->waitQueue);
         pushQueue(s->readyQueue, j);
     }
@@ -146,7 +146,7 @@ void moveWaitToReady(struct System* s){
 void moveRunningToReady(struct System* s){
     //move running job to ready queue
     if (s->running != NULL) {
-        psuQueue(s->readyQueue, s->running);
+        pushQueue(s->readyQueue, s->running);
         s->running = NULL;
     }
 

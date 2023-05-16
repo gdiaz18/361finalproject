@@ -91,10 +91,10 @@ struct Command* parseCommand(char* line) {
 
 
 
-int main(){
+/* int main(){
 
     return 0;
-}
+} */
 
 
 
