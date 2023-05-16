@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "job.h"
-#include"command.h"
+#include "Job.h"
+#include "command.h"
 
 //creates a new job from a command
 struct Job* newJob(struct Command* c){

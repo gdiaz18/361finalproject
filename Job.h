@@ -17,7 +17,8 @@ struct Job{
     //int holdDevice;
     //int requestDevice;
     int totalTime;
-    //int leftTime;
+    int burstTime;
+    int leftTime;
     int arrivalTime;
     int leaveTime;
     struct Job* next;
