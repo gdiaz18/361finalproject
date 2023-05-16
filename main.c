@@ -24,6 +24,12 @@ int current_time = 0;
 int used_memory = 0;
 int num_processes = 0;
 
+const char COMMAND_TYPE_C = 'C';
+const char COMMAND_TYPE_A = 'A';
+const char COMMAND_TYPE_Q = 'Q';
+const char COMMAND_TYPE_L = 'L';
+const char COMMAND_TYPE_D = 'D';
+
 //sorting hold queue based on SJF algorithm
 /* bool sjf_compare(Process p1, Process p2){
 	return p1.burst_time < p2.burst_time;
@@ -76,7 +82,7 @@ int main(){
 
 		switch (command->type){
 			//System Config
-			case 'COMMAND_TYPE_C': {
+			case COMMAND_TYPE_C: {
 				struct Command* info = command;
 				system = newSystem(info);
 
@@ -100,7 +106,7 @@ int main(){
 				break;
 			}
 			//Job arrival
-			case 'COMMAND_TYPE_A': {
+			case COMMAND_TYPE_A: {
 				struct Command* info = command;
 
 				struct Job* job = newJob(info);
@@ -142,7 +148,7 @@ int main(){
 				break;
 			}
 			//Request for Jobs
-			case 'COMMAND_TYPE_Q': {
+			case COMMAND_TYPE_Q: {
 				struct Command* info = command;
 
 				struct Job* job = newJob(info);
@@ -156,12 +162,12 @@ int main(){
 
 			}
 
-			case 'COMMAND_TYPE_L': {
+			case COMMAND_TYPE_L: {
 
 				break;
 			}
 
-			case 'COMMAND_TYPE_D': {
+			case COMMAND_TYPE_D: {
 
 				break;
 

@@ -19,10 +19,5 @@ struct Command{
 int parseParameter(char* line, char* type, int* num, int start);
 struct Command* parseCommand(char* line);
 
-const char COMMAND_TYPE_C = 'C';
-const char COMMAND_TYPE_A = 'A';
-const char COMMAND_TYPE_Q = 'Q';
-const char COMMAND_TYPE_L = 'L';
-const char COMMAND_TYPE_D = 'D';
 
 #endif
