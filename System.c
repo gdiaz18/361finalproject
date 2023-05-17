@@ -120,11 +120,33 @@ void moveOutHold(struct System* s){
 
 void moveReadyToRunning(struct System* s){
     //move jobs from ready to running state
-    if(s->running == NULL && (s->readyQueue->size != 0)){
-        s->running = popQueue(s->readyQueue);
-        s->startTime = s->time;
+    // if(s->running == NULL && (s->readyQueue->size != 0)){
+    //     s->running = popQueue(s->readyQueue);
+    //     s->startTime = s->time;
+    // }
+
+    //roudn robin way?
+      // Check if a job is running on the CPU
+    if (s->running != NULL) {
+        // Execute the job for the time quantum
+        s->running->leftTime -= s->timeQuantum;
+
+        // Check if the job has completed
+        if (s->running->leftTime <= 0) {
+            // Set the leave time for the completed job
+            s->running->leaveTime = s->time;
+
+            // Move the completed job to the leave queue
+            pushQueue(s->leaveQueue, s->running);
+            s->running = NULL;
+        } else {
+            // Move the job to the end of the ready queue
+            pushQueue(s->readyQueue, s->running);
+            s->running = NULL;
+        }
     }
 };
+
 
 void jobComplete(struct System* s){
     //move completed job from running state to leave queue
@@ -175,3 +197,5 @@ void releaseDevice(struct System* s, struct Command* c){
     //release device and icnrement availible device count
     s->curDevice++;
 };
+
+
