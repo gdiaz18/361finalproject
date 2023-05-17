@@ -101,9 +101,9 @@ int num_processes = 0;
 				system->curDevice = system->totalDevice;
 				system->timeQuantum = info->quantum;
 
-				printf("Made system");
+				printf("Made system\n");
 
-				break;
+				//break;
 			}
 			//Job arrival
 			case 'A': {
@@ -112,16 +112,16 @@ int num_processes = 0;
 				struct Job* job = newJob(info);
 				//need to incorporate jobs?? FIFO? SJF?
 				if(job->needMemory > system->totalMemory || job->needDevice > system->totalDevice){
-					printf("job is rejected, resource is not enough");
+					printf("job is rejected, resource is not enough\n");
 				}
 				if(system->curMemory >= job->needMemory){
-					printf("adding job to ready queue");
+					printf("adding job to ready queue\n");
 
 					//push job to readyqueue
 					pushQueue(system->readyQueue, job);
 
 					used_memory = used_memory + job->needMemory;
-					printf("Used memory: %d", used_memory);
+					printf("Used memory: %d\n", used_memory);
 
 					system->curMemory = system->totalMemory - job->needMemory;
 
@@ -133,19 +133,19 @@ int num_processes = 0;
 						printf("Adding %d to Hold Queue 1\n", job->jobId);
 						pushQueue(system->holdQueue1, job);
 
-						printf("Done Adding!");
+						printf("Done Adding!\n");
 					}
 					else{
 						//push job into hold queue 2 FIFO 
 						printf("Adding %d to Hold Queue 2\n", job->jobId);
-						printf("Memory needed: %d, Available: %d,", job->needMemory, system->totalMemory - used_memory);
+						printf("Memory needed: %d, Available: %d,\n", job->needMemory, system->totalMemory - used_memory);
 						pushQueue(system->holdQueue2, job);
 
-						printf("Done adding!");
+						printf("Done adding!\n");
 					}
 				}
 
-				break;
+				//break;
 			}
 			//Request for Jobs
 			case 'Q': {
@@ -158,7 +158,7 @@ int num_processes = 0;
 				}
 				//push that job into ready queue; else if # of devices = to need, running job pushed into waiting queue
 
-				break;
+				//break;
 
 			}
 
@@ -179,6 +179,7 @@ int num_processes = 0;
 
 		}
 	}
+	printf("outside while loop");
 	return 0;
 }
 
