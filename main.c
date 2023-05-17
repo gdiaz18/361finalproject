@@ -6,10 +6,10 @@
 #include "Job.h"
 #include "System.h"
 
-#ifdef COMMAND_H
-#define COMMAND_H
+//#ifdef COMMAND_H
+//#define COMMAND_H
 #include "command.h"
-#endif 
+//#endif 
 
 //testing branch
 
@@ -24,11 +24,11 @@ int current_time = 0;
 int used_memory = 0;
 int num_processes = 0;
 
-const char COMMAND_TYPE_C = 'C';
-const char COMMAND_TYPE_A = 'A';
-const char COMMAND_TYPE_Q = 'Q';
-const char COMMAND_TYPE_L = 'L';
-const char COMMAND_TYPE_D = 'D';
+// const char COMMAND_TYPE_C = 'C';
+// const char COMMAND_TYPE_A = 'A';
+// const char COMMAND_TYPE_Q = 'Q';
+// const char COMMAND_TYPE_L = 'L';
+// const char COMMAND_TYPE_D = 'D';
 
 //sorting hold queue based on SJF algorithm
 /* bool sjf_compare(Process p1, Process p2){
@@ -58,12 +58,12 @@ const char COMMAND_TYPE_D = 'D';
 
 
 
-int main(){
+ int main(){
 	//struct Devices tmp;
 	struct System *system;
 
 	//reading input files function
-	char file[500];
+	char *file;
 	
 	//char file_name[100]; ask about string error
 
@@ -82,7 +82,7 @@ int main(){
 
 		switch (command->type){
 			//System Config
-			case COMMAND_TYPE_C: {
+			case 'C': {
 				struct Command* info = command;
 				system = newSystem(info);
 
@@ -106,7 +106,7 @@ int main(){
 				break;
 			}
 			//Job arrival
-			case COMMAND_TYPE_A: {
+			case 'A': {
 				struct Command* info = command;
 
 				struct Job* job = newJob(info);
@@ -148,7 +148,7 @@ int main(){
 				break;
 			}
 			//Request for Jobs
-			case COMMAND_TYPE_Q: {
+			case 'Q': {
 				struct Command* info = command;
 
 				struct Job* job = newJob(info);
@@ -162,21 +162,24 @@ int main(){
 
 			}
 
-			case COMMAND_TYPE_L: {
+			case 'L': {
 
-				break;
+				//break;
 			}
 
-			case COMMAND_TYPE_D: {
+			case 'D': {
 
-				break;
+				//break;
 
 			}
+
+			default : 
+			//printf("broken line");
+			return 0;
 
 		}
 	}
-
-	
+	return 0;
 }
 
 
