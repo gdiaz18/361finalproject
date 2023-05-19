@@ -1,6 +1,7 @@
 #include "System.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "Job.h"
 #include "command.h"
 
@@ -198,4 +199,62 @@ void releaseDevice(struct System* s, struct Command* c){
     s->curDevice++;
 };
 
+
+bool bankers(struct System* s, struct Command* c, int numProcesses) {
+     int *allocated = malloc(numProcesses * sizeof(int));
+    int *max = malloc(numProcesses * sizeof(int));
+    int *need = malloc(numProcesses * sizeof(int));
+
+    //set allocated, max, and need lists 
+    struct Job* job = s->readyQueue->head;
+    int totalAllocated =0;
+    for(int i = 0; i <= numProcesses; i++){
+        allocated[i] = job->holdDevice;
+        max[i] = job->requestDevice;
+        need[i] = max[i] - allocated[i];
+        totalAllocated +=  allocated[i];
+        job = job -> next;
+    }
+
+
+    int availible = s->totalDevice- totalAllocated;
+    
+    int work = availible;
+    bool finish[numProcesses];
+
+    for (int i = 0; i <= numProcesses; i++) {
+        finish[i] = false;
+    }
+
+    // Check if the requested resources can be granted
+    for (int i = 0; i <= numProcesses; i++) {
+        if (need[i] > work) {
+            return false;
+        }
+    }
+
+    // Check for a safe state
+    for(int i = 0;i < numProcesses; i++){
+        for(int j = 0;j<numProcesses;j++){
+            if(finish[j] == false && need[j] <= work){
+                work += allocated[j];
+                finish[j] = true;
+            }
+        }
+    }
+
+    for(int i = 0;i < numProcesses; i++){
+        if(finish[i] == false){
+            printf("unsafe state");
+            return true;
+        }
+    }
+
+    free(allocated);
+    free(max);
+    free(need);
+    free(finish);
+
+    return true;
+}
 
