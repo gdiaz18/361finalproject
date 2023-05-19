@@ -10,7 +10,7 @@ struct Command{
     int time; // start/arrival time
     int jobId; //"A" command
     int memory; // "C" command "M"
-    int devices; // "C" command "S" and "Q"/"L" command "D"
+    int devices; // "C" command "S" and "Q"/"L" command "D" //request
     int quantum;//"C" command "Q"
     int runTime; //"A" command R
     int priority;//"A" command P
