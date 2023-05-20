@@ -63,7 +63,7 @@ int num_processes = 0;
 	struct System *system;
 
 	//reading input files function
-	char *file;
+	char *file = NULL;
 	
 	//char file_name[100]; ask about string error
 
@@ -154,9 +154,14 @@ int num_processes = 0;
 				struct Job* job = newJob(info);
 				//use if statement to compare number of devices - number of devices used greater than or equal to used devices
 				if((system->totalDevice - system->curDevice) >= system->curDevice){
-					
+					pushQueue(system->readyQueue, job);
+					printf("Job pushed into ready queue\n");
 				}
 				//push that job into ready queue; else if # of devices = to need, running job pushed into waiting queue
+				else if  (system->totalDevice == job->needDevice){
+					pushQueue(system->waitQueue, system->running);
+					printf("Running Job pushed into waiting queue\n");
+				}
 
 				//break;
 

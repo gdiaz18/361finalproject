@@ -14,8 +14,8 @@ struct Job{
     int priority;
     int needMemory;
     int needDevice;
-    //int holdDevice;
-    //int requestDevice;
+    int holdDevice; //allocation
+    int requestDevice; //max
     int totalTime;
     int burstTime;
     int leftTime;
