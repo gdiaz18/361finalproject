@@ -40,5 +40,6 @@ void pushQueue(struct Queue* q, struct Job* j);
 struct Job* popQueue(struct Queue* q);
 int emptyQueue(struct Queue* q);
 void displayJob(struct Job* j, int type);
+int printAtTime(int used_devices,int used_memory,int time,int time_passed, int memory, int devices, struct Queue *hold_queue1, struct Queue *hold_queue2, struct Queue *ready_queue, struct Queue *wait_queue, struct Job *finished, struct Queue *onCPU);
 
 #endif /*JOB_H*/

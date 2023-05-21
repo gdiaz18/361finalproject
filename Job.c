@@ -93,7 +93,7 @@ int emptyQueue(struct Queue*q){
 int printAtTime(int used_devices,int used_memory,int time,int time_passed, int memory, int devices, struct Queue *hold_queue1, struct Queue *hold_queue2, struct Queue *ready_queue, struct Queue *wait_queue, struct Job *finished, struct Queue *onCPU)
 // Prints current status of scheduler at a given time.
 {
-    int sum = 0;
+    /* int sum = 0;
     int count = 0;
     printf("At Time %d: \nCurrent Available Main Memory=%d \nCurrent Devices=%d \n", time, memory-used_memory, devices-used_devices);
     printf("---------------------------------------------------------------------------\n");
@@ -163,7 +163,7 @@ int printAtTime(int used_devices,int used_memory,int time,int time_passed, int m
         turnaround=(float)sum/count;
     }
     printf("System Turnaround Time: %.2f\n\n",turnaround);
-    return 0;
+    return 0; */
 }
 
 /* void displayJob(struct Job* j, int type){
@@ -176,4 +176,4 @@ int printAtTime(int used_devices,int used_memory,int time,int time_passed, int m
     else{
         printf("Invalid");
     }
-} */
+}*/
