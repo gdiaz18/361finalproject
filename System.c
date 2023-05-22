@@ -28,11 +28,11 @@ struct System* newSystem(struct Command* c){
 
     //initialize
     system->time = 0;
-    system ->totalMemory = c->memory;
-    system->curMemory = system -> totalMemory;
-    system -> totalDevice = c->devices;
-    system-> curDevice = system->totalDevice;
-    system -> timeQuantum = c->quantum;
+    system ->totalMemory = -1;
+    system->curMemory = -1;
+    system -> totalDevice = -1;
+    system-> curDevice = -1;
+    system -> timeQuantum = -1;
     system -> holdQueue1 = newQueue(1); //SJF
     system -> holdQueue2 = newQueue(2); //FIFO
     system->waitQueue = newQueue(-1);
@@ -45,7 +45,7 @@ struct System* newSystem(struct Command* c){
 };
 
 //this function im not sure about cause its suppose to return a number
-int nextEvent(struct System* s, struct Command* c){
+/* int nextEvent(struct System* s, struct Command* c){
     //check if job in hold queue
     if((s->holdQueue1->size != 0) || (s->holdQueue2->size != 0)){
         arriveJob(s,c); //confused cause 2nd param should be a job
@@ -76,7 +76,7 @@ int nextEvent(struct System* s, struct Command* c){
     }
 
     return -1;
-};
+}; */
 
 int arriveJob(struct System* s, struct Job* j){
     // find what hold queue to push the job
@@ -211,9 +211,10 @@ void releaseDevice(struct System* s, struct Command* c){
 
 
 int bankers(struct System* s, struct Command* c, int numProcesses) {
-     int *allocated = malloc(numProcesses * sizeof(int));
+    int *allocated = malloc(numProcesses * sizeof(int));
     int *max = malloc(numProcesses * sizeof(int));
     int *need = malloc(numProcesses * sizeof(int));
+    int *finish = malloc(numProcesses * sizeof(int));
 
     //set allocated, max, and need lists 
     struct Job* job = s->readyQueue->head;
@@ -227,10 +228,9 @@ int bankers(struct System* s, struct Command* c, int numProcesses) {
     }
 
 
-    int availible = s->totalDevice- totalAllocated;
+    int availible = s->totalDevice - totalAllocated;
     
     int work = availible;
-    int finish[numProcesses];
 
     for (int i = 0; i <= numProcesses; i++) {
         finish[i] = 0;
@@ -261,7 +261,9 @@ int bankers(struct System* s, struct Command* c, int numProcesses) {
     for(int i = 0;i < numProcesses; i++){
         if(finish[i] == 0){
             printf("unsafe state");
-             free(allocated);
+
+            //frees memory before jumping out
+            free(allocated);
             free(max);
             free(need);
             free(finish);
@@ -287,6 +289,86 @@ int printAtTime( struct System *s, int used_devices,int used_memory,int time,int
     printf("At Time %d: \nCurrent Available Main Memory=%d \nCurrent Devices=%d \n", time, memory-used_memory, devices-used_devices);
     printf("---------------------------------------------------------------------------\n");
     //Prints all of the finish jobs. TODO Jobs need Arrival Time and Finish Time  to show correct values.
+    printf("Completed Jobs:\n");
+    struct Job *job = s->leaveQueue->head;
+    while (job != NULL)
+    {
+        sum = sum + (job->leaveTime - job->arrivalTime);
+        count++;
+        printf("Job ID: %d Arrival Time: %d Finish Time: %d Turn Around Time: %d\n",
+               job->jobId, job->arrivalTime, job->leaveTime, (job->leftTime - job->arrivalTime));
+
+        job = job->next;
+    }
+    printf("---------------------------------------------------------------------------\n");
+    // Prints all currently Hold Queue 1
+    printf("Hold Queue 1: \n --------------------\n");
+    //holdQueue1 = s->holdQueue1->head;
+    job = s->holdQueue1->head;
+    while (job != NULL)
+    {
+        //hold_queue1 = hold_queue1->head;
+        printf("Job ID: %d Run Time: %d \n", job->jobId, job->burstTime);
+        job = job->next;
+    }
+    printf("---------------------------------------------------------------------------\n");
+    // Prints all currently on Hold Queue 2
+    printf("Hold Queue 2: \n --------------------\n");
+    job = s->holdQueue2->head;
+    while (job != NULL)
+    {
+        printf("Job ID: %d Run Time: %d \n", job->jobId, job->burstTime);
+        job = job->next;
+    }
+
+    printf("---------------------------------------------------------------------------\n");
+    // Prints all  currently Ready Queue; TODO Needs Time Accrued value
+    printf("Ready Queue: \n ---------------------------------\n");
+    job = s->readyQueue->head;
+    while (job != NULL)
+    {
+        printf("Job ID: %d Run Time: %d Time Accrued: %d\n", job->jobId, job->burstTime, job->totalTime);
+        job = job->next;
+    }
+    printf("---------------------------------------------------------------------------\n");
+    // Prints all  currently Wait Queue; TODO Needs Time Accrued value
+    printf("Wait Queue: \n ---------------------------------\n");
+    job = s->waitQueue->head;
+    while (job != NULL)
+    {
+        printf("Job ID: %d Run Time: %d Time Accrued: %d\n", job->jobId, job->burstTime, job->totalTime);
+        job = job->next;
+    }
+    printf("---------------------------------------------------------------------------\n");
+    // Prints all process on CPU; TODO needs Time Accrued and Time Left value; currently time left
+    // is burstTime-Accrued this will only work if burstTime is updated while on CPU (decreases with time on CPU)
+    printf("Running on CPU: \n---------------------------------\n");
+    /* job = s->running;
+    if(job != NULL){
+        if(time_passed!=0){
+    printf("Job ID: %d Time Accrued: %d Time Left: %d\n", job->jobId, job->totalTime+(time-time_passed), (job->burstTime - (job->totalTime+(time-time_passed))));
+        }else{
+           printf("Job ID: %d Time Accrued: %d Time Left: %d\n", job->jobId, job->totalTime+(time-job->arrivalTime), (job->burstTime - (job->totalTime+(time-job->arrivalTime)))); 
+        }
+    } */
+    printf("---------------------------------------------------------------------------\n");
+    // Calculates the average turnaround time of the jobs on the finished queue
+    float turnaround=0.0;
+    if(count>0){
+        turnaround=(float)sum/count;
+    }
+    printf("System Turnaround Time: %.2f\n\n",turnaround);
+    return 0;
+}
+
+int printAtTime(struct System *s, int availableMem, int availableDevices)
+// Prints current status of scheduler at a given time.
+{
+    int sum = 0;
+    int count = 0;
+    printf("At Time %d: \nCurrent Available Main Memory=%d \nCurrent Devices=%d \n", s->time, s->totalMemory-availableMem, s->totalDevice-availableDevices);
+    printf("---------------------------------------------------------------------------\n");
+    // Prints all of the finish jobs. TODO Jobs need Arrival Time and Finish Time  to show correct values.
     printf("Completed Jobs:\n");
     struct Job *job = s->leaveQueue->head;
     while (job != NULL)

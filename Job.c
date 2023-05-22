@@ -6,12 +6,17 @@
 
 //creates a new job from a command
 struct Job* newJob(struct Command* c){
-    struct Job* newJob = (struct Job*)malloc(sizeof(struct Job));
+    struct Job* newJob = (struct Job*)malloc(2+sizeof(struct Job));
     //does set job based on command
     if(newJob == NULL){
         return NULL;
     }
     newJob->next = NULL;
+    newJob->jobId = c->jobId;
+    newJob->priority = c->priority;
+    newJob->burstTime = c->runTime;
+    newJob->needMemory = c->memory;
+    newJob->needDevice = c->devices;
     return newJob;
 }
 
@@ -92,14 +97,15 @@ int emptyQueue(struct Queue*q){
 }
 
 
-/* void displayJob(struct Job* j, int type){
-    if(type == 1){
-        printf("Type: SJF");
+
+void printQueue(struct Queue *queue)
+{
+    //this was mainly for debugging. it prints the current order of the queue passed in as a parameter
+    printf("%s\n", "---------printing queue------");
+    while (queue != NULL)
+    {
+        printf("JobNumber:%d with remaining %d\n", queue->head->jobId,queue->head->burstTime-queue->head->leftTime);
+        queue->head = queue->head->next;
     }
-    else if (type == 2){
-        printf("Typle: FIFO");
-    }
-    else{
-        printf("Invalid");
-    }
-}*/
+    printf("%s\n", "----------------------------");
+}

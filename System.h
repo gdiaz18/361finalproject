@@ -35,6 +35,6 @@ void moveRunningToWait(struct System* s);
 void requestDevice(struct System* s, struct Command* c, int numProcesses);
 void releaseDevice(struct System* s, struct Command* c);
 int bankers(struct System* s, struct Command* c, int numProcesses);
-int printAtTime( struct System *s, int used_devices,int used_memory,int time,int time_passed, int memory, int devices);
+int printAtTime(struct System *s, int availableMem, int availableDevices);
 
 #endif
