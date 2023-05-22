@@ -13,7 +13,7 @@ struct Job{
     int jobId;
     int priority;
     int needMemory;
-    int needDevice;
+    int needDevice; 
     int holdDevice; //allocation
     int requestDevice; //max
     int totalTime;

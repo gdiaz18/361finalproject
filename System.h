@@ -9,7 +9,7 @@ struct System{
     int time; //current time
     int totalMemory;
     int curMemory;
-    int totalDevice;
+    int totalDevice; //availible = total - curr
     int curDevice;
     int timeQuantum;
     struct Queue* holdQueue1;
