@@ -152,28 +152,28 @@ int num_processes = 0;
 				struct Command* info = command;
 
 				struct Job* job = newJob(info);
-				//use if statement to compare number of devices - number of devices used greater than or equal to used devices
-				if((system->totalDevice - system->curDevice) >= system->curDevice){
-					pushQueue(system->readyQueue, job);
-					printf("Job pushed into ready queue\n");
-				}
-				//push that job into ready queue; else if # of devices = to need, running job pushed into waiting queue
-				else if  (system->totalDevice == job->needDevice){
-					pushQueue(system->waitQueue, system->running);
-					printf("Running Job pushed into waiting queue\n");
+				//compare number of devices & number of devices to push that job into ready queue; else if # of devices = to need, running job pushed into waiting queue
+				if(job->jobId == system->running->jobId && (system->totalDevice + system->curDevice) <= system->running->needDevice){
+					requestDevice(system, info, num_processes);
 				}
 
 				//break;
 
 			}
-
+			//Release job
 			case 'L': {
+				struct Command* info = command;
+
+				struct Job* job = newJob(info);
+				if (job->jobId == system->running->jobId && (system->totalDevice + system->curDevice) <= system->running->holdDevice){
+					releaseDevice(system, info);
+				}
 
 				//break;
 			}
 
 			case 'D': {
-
+				printAtTime(system, system->holdQueue1, system->holdQueue2, system->readyQueue, system->waitQueue, system->leaveQueue);
 				//break;
 
 			}
