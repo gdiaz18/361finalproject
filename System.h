@@ -32,7 +32,8 @@ void jobComplete(struct System* s);
 void moveWaitToReady(struct System* s);
 void moveRunningToReady(struct System* s);
 void moveRunningToWait(struct System* s);
-void requestDevice(struct System* s, struct Command* c);
+void requestDevice(struct System* s, struct Command* c, int numProcesses);
 void releaseDevice(struct System* s, struct Command* c);
+int bankers(struct System* s, struct Command* c, int numProcesses);
 
 #endif

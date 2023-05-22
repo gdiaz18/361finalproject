@@ -183,11 +183,16 @@ void moveRunningToWait(struct System* s){
     }
 };
 
-void requestDevice(struct System* s, struct Command* c){
+void requestDevice(struct System* s, struct Command* c, int numProcesses){
     //check is system has availible devices
-    if(s->curDevice > 0){
-        s-> curDevice--;
-    }
+    // if(s->curDevice > 0){
+    //     s-> curDevice--;
+    // }
+    int safe = bankers(s,c,numProcesses);
+    if(safe == 1){
+        c->devices += s -> curDevice;
+        s->curDevice -= c->devices;
+         }
     else{
         //if no availible devices push job to wait queue
         pushQueue(s->waitQueue, c->jobId); //this might wrong
@@ -200,7 +205,7 @@ void releaseDevice(struct System* s, struct Command* c){
 };
 
 
-bool bankers(struct System* s, struct Command* c, int numProcesses) {
+int bankers(struct System* s, struct Command* c, int numProcesses) {
      int *allocated = malloc(numProcesses * sizeof(int));
     int *max = malloc(numProcesses * sizeof(int));
     int *need = malloc(numProcesses * sizeof(int));
@@ -220,33 +225,43 @@ bool bankers(struct System* s, struct Command* c, int numProcesses) {
     int availible = s->totalDevice- totalAllocated;
     
     int work = availible;
-    bool finish[numProcesses];
+    int finish[numProcesses];
 
     for (int i = 0; i <= numProcesses; i++) {
-        finish[i] = false;
+        finish[i] = 0;
     }
 
     // Check if the requested resources can be granted
     for (int i = 0; i <= numProcesses; i++) {
         if (need[i] > work) {
-            return false;
+            free(allocated);
+            free(max);
+            free(need);
+            free(finish);
+
+            return 0;
         }
     }
 
     // Check for a safe state
     for(int i = 0;i < numProcesses; i++){
         for(int j = 0;j<numProcesses;j++){
-            if(finish[j] == false && need[j] <= work){
+            if(finish[j] == 0 && need[j] <= work){
                 work += allocated[j];
-                finish[j] = true;
+                finish[j] = 1;
             }
         }
     }
 
     for(int i = 0;i < numProcesses; i++){
-        if(finish[i] == false){
+        if(finish[i] == 0){
             printf("unsafe state");
-            return true;
+             free(allocated);
+            free(max);
+            free(need);
+            free(finish);
+
+            return 1;
         }
     }
 
@@ -255,6 +270,6 @@ bool bankers(struct System* s, struct Command* c, int numProcesses) {
     free(need);
     free(finish);
 
-    return true;
+    return 0;
 }
 
