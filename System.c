@@ -192,16 +192,21 @@ void requestDevice(struct System* s, struct Command* c, int numProcesses){
     if(safe == 1){
         c->devices += s -> curDevice;
         s->curDevice -= c->devices;
+        pushQueue(s->readyQueue, s->running);
          }
     else{
         //if no availible devices push job to wait queue
-        pushQueue(s->waitQueue, c->jobId); //this might wrong
+        pushQueue(s->waitQueue, s->running); //this might wrong
     }
 };
 
 void releaseDevice(struct System* s, struct Command* c){
     //release device and icnrement availible device count
-    s->curDevice++;
+    s->totalDevice += c->devices;
+    s->running->holdDevice -= c->devices;
+
+    pushQueue(s->readyQueue,s->running);
+    s->running = NULL;
 };
 
 

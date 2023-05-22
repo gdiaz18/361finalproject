@@ -63,7 +63,7 @@ int num_processes = 0;
 	struct System *system;
 
 	//reading input files function
-	char *file;
+	char *file = NULL;
 	
 	//char file_name[100]; ask about string error
 
@@ -152,23 +152,28 @@ int num_processes = 0;
 				struct Command* info = command;
 
 				struct Job* job = newJob(info);
-				//use if statement to compare number of devices - number of devices used greater than or equal to used devices
-				if((system->totalDevice - system->curDevice) >= system->curDevice){
-					
+				//compare number of devices & number of devices to push that job into ready queue; else if # of devices = to need, running job pushed into waiting queue
+				if(job->jobId == system->running->jobId && (system->totalDevice + system->curDevice) <= system->running->needDevice){
+					requestDevice(system, info, num_processes);
 				}
-				//push that job into ready queue; else if # of devices = to need, running job pushed into waiting queue
 
 				//break;
 
 			}
-
+			//Release job
 			case 'L': {
+				struct Command* info = command;
+
+				struct Job* job = newJob(info);
+				if (job->jobId == system->running->jobId && (system->totalDevice + system->curDevice) <= system->running->holdDevice){
+					releaseDevice(system, info);
+				}
 
 				//break;
 			}
 
 			case 'D': {
-
+				printAtTime(system, system->holdQueue1, system->holdQueue2, system->readyQueue, system->waitQueue, system->leaveQueue);
 				//break;
 
 			}
