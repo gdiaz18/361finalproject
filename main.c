@@ -129,7 +129,7 @@ int used_devices = 0;
 				}
 
 				//To show that function works when uncommented despite the fact is should not be called here
-				printAtTime(system, available_memory, system->totalDevice);
+				//printAtTime(system, available_memory, system->totalDevice);
 
 				//break;
 			}
@@ -167,7 +167,7 @@ int used_devices = 0;
 			}
 
 			case 'D': {
-				//printAtTime(system, available_memory, used_devices);				
+				printAtTime(system, available_memory, used_devices);				
 				//break;
 
 			}
