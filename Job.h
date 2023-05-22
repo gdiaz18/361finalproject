@@ -41,4 +41,5 @@ struct Job* popQueue(struct Queue* q);
 int emptyQueue(struct Queue* q);
 void displayJob(struct Job* j, int type);
 void printQueue(struct Queue *queue);
+
 #endif /*JOB_H*/

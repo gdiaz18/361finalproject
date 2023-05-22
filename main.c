@@ -20,7 +20,28 @@ int used_memory = 0;
 int num_processes = 0;
 int used_devices = 0;
 
-
+int getInternalEventTime(struct System* s, int quantum, int time_passed)
+{
+    // this function gets the time of the next internal event(i.e. running a job on the CPU). this time
+    // is then compared to the next instruction read time. internal events are prioritized.
+    if (s->readyQueue == NULL)
+    {
+        // if ready_queue mt, we need to read a new instruction so internal_event_time needs to be > next_instruction_time so we set internal_event_time to be arbitrary large number
+        return 9999999;
+    }
+    else
+    {
+        if (s->readyQueue->head->leftTime + quantum <= s->readyQueue->head->burstTime)
+        {
+            return time_passed + quantum;
+        }
+        else
+        {
+            // process will not finish quantum and we need to return curr time +remaining burstTime
+            return time_passed + (s->readyQueue->head->burstTime - s->readyQueue->head->leftTime);
+        }
+    }
+}
 
  int main(){
 	struct System *system;
@@ -47,7 +68,6 @@ int used_devices = 0;
 
 	//reading through each line
 	while (fgets(file, sizeof(file), ptr) != NULL){
-
 		//call parsing functions and then push to queue
 		struct Command* command = parseCommand(file);
 		system = newSystem(command);
@@ -76,6 +96,13 @@ int used_devices = 0;
 
 				system->timeQuantum = command->quantum;
 				printf("Quantum: %d\n", system->timeQuantum);
+
+				printf("Systems: total memory: %d\n", system->totalMemory);
+				printf("Systems: quantum: %d\n", system->timeQuantum);
+				printf("Systems: time : %d\n", system->time);
+
+
+
 
 				printf("Made system\n");
 				
@@ -137,6 +164,7 @@ int used_devices = 0;
 			case 'Q': {
 				command = parseCommand(file);
 
+
 				struct Job* job = newJob(command);
 				//compare number of devices & number of devices to push that job into ready queue; else if # of devices = to need, running job pushed into waiting queue
 				if(job->jobId == system->running->jobId && (system->totalDevice + system->curDevice) <= system->running->needDevice){
@@ -145,6 +173,7 @@ int used_devices = 0;
 
 					//Adding to used devices based on how many devices job needs
 					used_devices += job->needDevice;
+
 				}
 
 				//break;
@@ -173,11 +202,13 @@ int used_devices = 0;
 			}
 
 			default : 
-			//printf("broken line");
+			printf("broken line");
 			return 0;
 
-		}
+		 }
 	}
+	printAtTime(system,system->curDevice, used_memory,system->time,current_time, system->totalMemory, system->totalDevice );
+
 	printf("outside while loop");
 	fclose(ptr);
 	return 0;

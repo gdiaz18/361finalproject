@@ -97,6 +97,7 @@ int emptyQueue(struct Queue*q){
 }
 
 
+
 void printQueue(struct Queue *queue)
 {
     //this was mainly for debugging. it prints the current order of the queue passed in as a parameter
