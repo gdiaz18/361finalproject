@@ -25,11 +25,11 @@ int used_devices = 0;
  int main(){
 	struct System *system;
 
-	/* system->holdQueue1 = (struct Queue*)malloc(sizeof(struct Queue));
+	system->holdQueue1 = (struct Queue*)malloc(sizeof(struct Queue));
 	system->holdQueue2 = (struct Queue*)malloc(sizeof(struct Queue));
 	system->readyQueue = (struct Queue*)malloc(sizeof(struct Queue));
 	system->waitQueue = (struct Queue*)malloc(sizeof(struct Queue));
-	system->leaveQueue = (struct Queue*)malloc(sizeof(struct Queue)); */
+	system->leaveQueue = (struct Queue*)malloc(sizeof(struct Queue));
 
 	//reading input files function
 	char *file;
@@ -129,7 +129,7 @@ int used_devices = 0;
 				}
 
 				//To show that function works when uncommented despite the fact is should not be called here
-				//printAtTime(system, available_memory, system->totalDevice);
+				printAtTime(system, available_memory, system->totalDevice);
 
 				//break;
 			}
@@ -167,7 +167,7 @@ int used_devices = 0;
 			}
 
 			case 'D': {
-				printAtTime(system, available_memory, used_devices);				
+				//printAtTime(system, available_memory, used_devices);				
 				//break;
 
 			}
