@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Device.h"
 #include "Job.h"
 #include "System.h"
 
@@ -56,14 +55,35 @@ int num_processes = 0;
 		}
 	} */
 
-
+int getInternalEventTime(struct System* s, int quantum, int time_passed)
+{
+    // this function gets the time of the next internal event(i.e. running a job on the CPU). this time
+    // is then compared to the next instruction read time. internal events are prioritized.
+    if (s->readyQueue == NULL)
+    {
+        // if ready_queue mt, we need to read a new instruction so internal_event_time needs to be > next_instruction_time so we set internal_event_time to be arbitrary large number
+        return 9999999;
+    }
+    else
+    {
+        if (s->readyQueue->head->leftTime + quantum <= s->readyQueue->head->burstTime)
+        {
+            return time_passed + quantum;
+        }
+        else
+        {
+            // process will not finish quantum and we need to return curr time +remaining burstTime
+            return time_passed + (s->readyQueue->head->burstTime - s->readyQueue->head->leftTime);
+        }
+    }
+}
 
  int main(){
 	//struct Devices tmp;
 	struct System *system;
 
 	//reading input files function
-	char *file = NULL;
+	char *file;
 	
 	//char file_name[100]; ask about string error
 
@@ -76,7 +96,6 @@ int num_processes = 0;
 
 	//reading through each line
 	while (fgets(file, sizeof(file), ptr) != NULL){
-
 		//call parsing functions and then push to queue
 		struct Command* command = parseCommand(file);
 
@@ -100,6 +119,13 @@ int num_processes = 0;
 				system->totalDevice = info->devices;
 				system->curDevice = system->totalDevice;
 				system->timeQuantum = info->quantum;
+
+				printf("Systems: total memory: %d\n", system->totalMemory);
+				printf("Systems: quantum: %d\n", system->timeQuantum);
+				printf("Systems: time : %d\n", system->time);
+
+
+
 
 				printf("Made system\n");
 
@@ -152,9 +178,11 @@ int num_processes = 0;
 				struct Command* info = command;
 
 				struct Job* job = newJob(info);
+				printf("in queue case");
 				//compare number of devices & number of devices to push that job into ready queue; else if # of devices = to need, running job pushed into waiting queue
 				if(job->jobId == system->running->jobId && (system->totalDevice + system->curDevice) <= system->running->needDevice){
 					requestDevice(system, info, num_processes);
+					printf("if statement in queue");
 				}
 
 				//break;
@@ -173,17 +201,19 @@ int num_processes = 0;
 			}
 
 			case 'D': {
-				printAtTime(system, system->holdQueue1, system->holdQueue2, system->readyQueue, system->waitQueue, system->leaveQueue);
+				//printAtTime(system);
 				//break;
 
 			}
 
 			default : 
-			//printf("broken line");
+			printf("broken line");
 			return 0;
 
-		}
+		 }
 	}
+	printAtTime(system,system->curDevice, used_memory,system->time,current_time, system->totalMemory, system->totalDevice );
+
 	printf("outside while loop");
 	return 0;
 }

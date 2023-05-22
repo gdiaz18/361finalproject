@@ -60,6 +60,7 @@ struct Command* parseCommand(char* line) {
         i = parseParameter(line, &param_type, &param_value, i);
         switch (param_type) {
             case 'M':
+                i = parseParameter(line, &param_type, &param_value, i);
                 cmd->memory = param_value;
                 break;
             case 'S':
