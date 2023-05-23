@@ -96,12 +96,10 @@ int emptyQueue(struct Queue*q){
     return 0;
 }
 
-
-
+//Debugging purposes
 void printQueue(struct Queue *queue)
 {
-    //this was mainly for debugging. it prints the current order of the queue passed in as a parameter
-    printf("%s\n", "---------printing queue------");
+    printf("%s\n", "------Printed queue-----");
     while (queue != NULL)
     {
         printf("JobNumber:%d with remaining %d\n", queue->head->jobId,queue->head->burstTime-queue->head->leftTime);
