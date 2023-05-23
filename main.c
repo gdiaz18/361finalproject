@@ -8,43 +8,34 @@
 
 #include "command.h"
 
-//#define MAX_LINE_LENGTH 100
 
 //Global Variables
 
 int MAX_FILE_SIZE = 500;
 
-//int time_slice = 4;
 int current_time = 0;
 int available_memory = 256;
 int used_memory = 0;
 int num_processes = 0;
 int used_devices = 0;
 
-int getInternalEventTime(struct System* s, int quantum, int time_passed)
-{
-    // this function gets the time of the next internal event(i.e. running a job on the CPU). this time
-    // is then compared to the next instruction read time. internal events are prioritized.
-    if (s->readyQueue == NULL)
-    {
-        // if ready_queue mt, we need to read a new instruction so internal_event_time needs to be > next_instruction_time so we set internal_event_time to be arbitrary large number
+int internalEvent(struct System* s, int quantum, int time_passed){
+    //checks if ready queue is null
+    if (s->readyQueue == NULL){
         return 9999999;
     }
-    else
-    {
-        if (s->readyQueue->head->leftTime + quantum <= s->readyQueue->head->burstTime)
-        {
+    else{
+        if (s->readyQueue->head->leftTime + quantum <= s->readyQueue->head->burstTime){
             return time_passed + quantum;
         }
-        else
-        {
-            // process will not finish quantum and we need to return curr time +remaining burstTime
+        else{
             return time_passed + (s->readyQueue->head->burstTime - s->readyQueue->head->leftTime);
         }
     }
 }
 
  int main(){
+	//Allocating memory for system and queues
 	struct System* system = (struct System*)malloc(sizeof(struct System));
 
 	system->holdQueue1 = (struct Queue*)malloc(sizeof(struct Queue));
@@ -56,12 +47,11 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 	//reading input files function
 	char *file = (char*)malloc(sizeof(char) * MAX_FILE_SIZE);
 	
-	//char file[MAX_FILE_SIZE];
 
 	//opening file
 	FILE* ptr = fopen("i0.txt", "r");
 
-
+	//if file cannot be opened, exit
 	if(ptr == NULL){
 		printf("File cannot be opened");
 		exit(1);
@@ -98,24 +88,16 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 				system->timeQuantum = command->quantum;
 				printf("Quantum: %d\n", system->timeQuantum);
 
-				printf("Systems: total memory: %d\n", system->totalMemory);
-				printf("Systems: quantum: %d\n", system->timeQuantum);
-				printf("Systems: time : %d\n", system->time);
+				current_time += system->time;
 
-
-
+				//need to call interalEvent?
 
 				printf("Made system\n");
 				
-
-				//break;
 			}
 			//Job arrival
 			case 'A': {
 				command = parseCommand(file);
-
-				//Debugging print statement
-				//printf("Command %c\n", command->type);
 
 				struct Job* job = newJob(command);
 				//Checking if job needs more memory or devices that are available
@@ -128,7 +110,6 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 
 					//push job to readyqueue
 					pushQueue(system->readyQueue, job);
-					printf("Added Job %d\n", job->jobId);
 
 					//Adding to used memory based on how much job needed
 					used_memory = used_memory + job->needMemory;
@@ -157,9 +138,10 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 				}
 
 				//To show that function works when uncommented despite the fact is should not be called here
-				printAtTime(system, available_memory, system->totalDevice);
+				//printAtTime(system, available_memory, system->totalDevice);
 
-				//break;
+				//need to call interalEvent?
+
 			}
 			//Request for Jobs
 			case 'Q': {
@@ -177,8 +159,6 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 
 				}
 
-				//break;
-
 			}
 			//Release job
 			case 'L': {
@@ -193,12 +173,10 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 					used_devices -= job->needDevice;
 				}
 
-				//break;
 			}
 
 			case 'D': {
 				printAtTime(system, available_memory, used_devices);				
-				//break;
 
 			}
 
@@ -210,9 +188,8 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 		free(command);
 
 	}
-	//printAtTime(system,system->curDevice, used_memory, system->time,current_time, system->totalMemory, system->totalDevice );
 
-	printf("outside while loop");
+	printf("Closing file");
 	fclose(ptr);
 	free(system->holdQueue1);
     free(system->holdQueue2);

@@ -6,8 +6,6 @@
 #ifndef JOB_H
 #define JOB_H
 
-//typedef struct Job Job;
-//typedef struct Queue Queue;
 
 struct Job{
     int jobId;
@@ -18,9 +16,9 @@ struct Job{
     int requestDevice; //max
     int totalTime;
     int burstTime;
-    int leftTime;
+    int leftTime; //when job actually left/finished
     int arrivalTime;
-    int leaveTime;
+    int leaveTime; //when it is going to leave/finish
     struct Job* next;
 };
 
