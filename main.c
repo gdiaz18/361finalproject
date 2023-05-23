@@ -12,6 +12,7 @@
 
 //Global Variables
 
+int MAX_FILE_SIZE = 500;
 
 //int time_slice = 4;
 int current_time = 0;
@@ -44,7 +45,7 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 }
 
  int main(){
-	struct System *system;
+	struct System* system = (struct System*)malloc(sizeof(struct System));
 
 	system->holdQueue1 = (struct Queue*)malloc(sizeof(struct Queue));
 	system->holdQueue2 = (struct Queue*)malloc(sizeof(struct Queue));
@@ -53,9 +54,9 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 	system->leaveQueue = (struct Queue*)malloc(sizeof(struct Queue));
 
 	//reading input files function
-	char *file;
+	char *file = (char*)malloc(sizeof(char) * MAX_FILE_SIZE);
 	
-	//char line[MAX_LINE_LENGTH];
+	//char file[MAX_FILE_SIZE];
 
 	//opening file
 	FILE* ptr = fopen("i0.txt", "r");
@@ -156,7 +157,7 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 				}
 
 				//To show that function works when uncommented despite the fact is should not be called here
-				//printAtTime(system, available_memory, system->totalDevice);
+				printAtTime(system, available_memory, system->totalDevice);
 
 				//break;
 			}
@@ -206,11 +207,19 @@ int getInternalEventTime(struct System* s, int quantum, int time_passed)
 			return 0;
 
 		 }
+		free(command);
+
 	}
-	printAtTime(system,system->curDevice, used_memory,system->time,current_time, system->totalMemory, system->totalDevice );
+	//printAtTime(system,system->curDevice, used_memory, system->time,current_time, system->totalMemory, system->totalDevice );
 
 	printf("outside while loop");
 	fclose(ptr);
+	free(system->holdQueue1);
+    free(system->holdQueue2);
+    free(system->readyQueue);
+    free(system->waitQueue);
+    free(system->leaveQueue);
+    free(system);
 	return 0;
 }
 
